@@ -1041,13 +1041,14 @@ async def get_now_playing():
             
             if windows:
                 title = windows[0]
-                # 尝试解析标题中的歌曲信息
+                # 窗口标题方式无法准确判断播放状态，设为None
                 return ApiResponse(
                     success=True,
                     data={
                         "song_name": title,
-                        "is_playing": True,
-                        "method": "window_title"
+                        "is_playing": None,  # 无法判断，需要调用者自行检查
+                        "method": "window_title",
+                        "note": "播放状态需要通过Selenium方式获取"
                     },
                     message=f"[OK] 从窗口标题获取: {title}"
                 )

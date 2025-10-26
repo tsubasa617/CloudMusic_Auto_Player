@@ -733,8 +733,9 @@ def get_now_playing() -> dict:
                 return {
                     "success": True,
                     "song_name": title,
-                    "is_playing": True,
+                    "is_playing": None,  # 无法判断，需要调用者自行检查
                     "method": "window_title",
+                    "note": "播放状态需要通过Selenium方式获取",
                     "message": f"从窗口标题获取: {title}"
                 }
         except Exception as e:

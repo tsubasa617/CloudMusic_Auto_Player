@@ -673,6 +673,91 @@ def get_netease_config() -> dict:
         }
 
 @mcp.tool()
+def get_now_playing() -> dict:
+    """
+    获取当前正在播放的歌曲信息
+    
+    Returns:
+        dict: 当前播放的歌曲信息
+    """
+    try:
+        # 如果Selenium可用，尝试从每日推荐控制器获取
+        if SELENIUM_AVAILABLE and _daily_controller.driver:
+            try:
+                # 连接网易云音乐
+                if _daily_controller.connect_to_netease():
+                    # 获取当前播放的音乐信息
+                    current_music = _daily_controller.get_current_music()
+                    is_playing = _daily_controller.is_playing()
+                    
+                    if current_music:
+                        return {
+                            "success": True,
+                            "song_name": current_music,
+                            "is_playing": is_playing,
+                            "method": "selenium_driver",
+                            "message": f"当前播放: {current_music}"
+                        }
+            except Exception as e:
+                logger.debug(f"Selenium方式获取失败: {e}")
+        
+        # 方法2: 尝试从窗口标题获取（Windows）
+        try:
+            import win32gui
+            import win32process
+            import psutil
+            
+            def enum_windows_callback(hwnd, result):
+                if win32gui.IsWindowVisible(hwnd):
+                    window_title = win32gui.GetWindowText(hwnd)
+                    
+                    try:
+                        _, pid = win32process.GetWindowThreadProcessId(hwnd)
+                        process = psutil.Process(pid)
+                        process_name = process.name().lower()
+                        
+                        # 检查是否是网易云音乐进程
+                        if process_name == "cloudmusic.exe" or "cloudmusic" in process_name:
+                            if window_title and window_title not in ["网易云音乐", "NetEase CloudMusic"]:
+                                # 窗口标题通常包含歌曲信息
+                                result.append(window_title)
+                    except:
+                        pass
+                return True
+            
+            windows = []
+            win32gui.EnumWindows(enum_windows_callback, windows)
+            
+            if windows:
+                title = windows[0]
+                return {
+                    "success": True,
+                    "song_name": title,
+                    "is_playing": True,
+                    "method": "window_title",
+                    "message": f"从窗口标题获取: {title}"
+                }
+        except Exception as e:
+            logger.debug(f"窗口标题方式获取失败: {e}")
+        
+        # 如果所有方法都失败
+        return {
+            "success": False,
+            "song_name": None,
+            "is_playing": None,
+            "method": "none",
+            "message": "无法获取当前播放信息",
+            "hint": "可能需要先启动网易云音乐并播放歌曲"
+        }
+        
+    except Exception as e:
+        logger.error(f"获取当前播放信息失败: {e}")
+        return {
+            "success": False,
+            "message": f"获取当前播放信息失败: {str(e)}"
+        }
+
+@mcp.tool()
 def play_daily_recommend() -> dict:
     """
     播放网易云音乐每日推荐歌单

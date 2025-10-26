@@ -152,6 +152,10 @@ async def custom_swagger_ui_html():
                     <span class="method get">GET</span> <span class="path">/config</span>
                     <div class="description">获取网易云音乐配置信息</div>
                 </div>
+                <div class="endpoint">
+                    <span class="method get">GET</span> <span class="path">/now-playing</span>
+                    <div class="description">获取当前播放的歌曲信息</div>
+                </div>
             </div>
             
             <div class="section">
@@ -305,6 +309,9 @@ async def offline_docs():
         </div>
         <div class="endpoint">
             <span class="method">GET</span> <span class="path">/config</span> - 获取配置信息
+        </div>
+        <div class="endpoint">
+            <span class="method">GET</span> <span class="path">/now-playing</span> - 获取当前播放的歌曲信息
         </div>
         
         <h2>应用控制</h2>

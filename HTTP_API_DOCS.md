@@ -12,8 +12,8 @@
 # 使用 uv（推荐）
 uv sync
 
-# 或使用 pip
-pip install fastapi uvicorn pyautogui pywin32 psutil selenium requests
+# 或使用 pip（使用国内源）
+pip install fastapi uvicorn pyautogui pywin32 psutil selenium requests -i https://pypi.tuna.tsinghua.edu.cn/simple/
 ```
 
 ### 2. 启动服务器

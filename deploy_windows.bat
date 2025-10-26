@@ -11,7 +11,7 @@ if %errorlevel% neq 0 (
 )
 
 echo 2. 安装依赖包...
-pip install fastapi uvicorn requests psutil pyautogui pywin32 selenium
+pip install fastapi uvicorn requests psutil pyautogui pywin32 selenium -i https://pypi.tuna.tsinghua.edu.cn/simple/
 if %errorlevel% neq 0 (
     echo 警告: 部分依赖安装失败，请手动安装
 )

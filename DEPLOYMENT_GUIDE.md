@@ -31,11 +31,11 @@ cd CloudMusic_Auto_Player
 
 #### 使用pip安装（推荐）
 ```bash
-# 安装所有依赖
-pip install -r requirements.txt
+# 安装所有依赖（使用国内源）
+pip install -r requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple/
 
 # 或逐个安装
-pip install fastapi uvicorn requests psutil pyautogui pywin32 selenium
+pip install fastapi uvicorn requests psutil pyautogui pywin32 selenium -i https://pypi.tuna.tsinghua.edu.cn/simple/
 ```
 
 #### 使用虚拟环境（推荐）
@@ -49,8 +49,8 @@ venv\Scripts\activate
 # macOS/Linux
 source venv/bin/activate
 
-# 安装依赖
-pip install -r requirements.txt
+# 安装依赖（使用国内源）
+pip install -r requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple/
 ```
 
 ### 步骤3: 配置路径
@@ -112,8 +112,8 @@ uvicorn src.http_server:app --host 0.0.0.0 --port 8000
 git clone https://github.com/xiduan/CloudMusic_Auto_Player.git
 cd CloudMusic_Auto_Player
 
-# 2. 安装依赖
-pip install -r requirements.txt
+# 2. 安装依赖（使用国内源）
+pip install -r requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple/
 
 # 3. 配置路径
 python auto_config.py
@@ -135,8 +135,8 @@ python start_http_server.py
 git clone https://github.com/xiduan/CloudMusic_Auto_Player.git
 cd CloudMusic_Auto_Player
 
-# 2. 安装依赖（不包含pywin32）
-pip install fastapi uvicorn requests psutil pyautogui selenium
+# 2. 安装依赖（不包含pywin32，使用国内源）
+pip install fastapi uvicorn requests psutil pyautogui selenium -i https://pypi.tuna.tsinghua.edu.cn/simple/
 
 # 3. 配置网易云音乐路径
 export NETEASE_MUSIC_PATH="/Applications/NeteaseMusic.app/Contents/MacOS/NeteaseMusic"
@@ -158,8 +158,8 @@ python start_http_server.py
 git clone https://github.com/xiduan/CloudMusic_Auto_Player.git
 cd CloudMusic_Auto_Player
 
-# 2. 安装依赖
-pip install fastapi uvicorn requests psutil pyautogui selenium
+# 2. 安装依赖（使用国内源）
+pip install fastapi uvicorn requests psutil pyautogui selenium -i https://pypi.tuna.tsinghua.edu.cn/simple/
 
 # 3. 配置路径
 export NETEASE_MUSIC_PATH="/path/to/netease/music"

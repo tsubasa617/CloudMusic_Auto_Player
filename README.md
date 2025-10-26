@@ -142,20 +142,20 @@ cd CloudMusic_Auto_Player
 
 #### 2. 安装依赖
 
-**Windows 用户：**
+**Windows 用户（使用国内源）：**
 ```bash
-pip install fastapi uvicorn[standard] requests psutil pyautogui pywin32 selenium
+pip install fastapi uvicorn[standard] requests psutil pyautogui pywin32 selenium -i https://pypi.tuna.tsinghua.edu.cn/simple/
 ```
 
-**macOS/Linux 用户：**
+**macOS/Linux 用户（使用国内源）：**
 ```bash
-pip install fastapi uvicorn[standard] requests psutil pyautogui selenium
+pip install fastapi uvicorn[standard] requests psutil pyautogui selenium -i https://pypi.tuna.tsinghua.edu.cn/simple/
 ```
 
-**使用 requirements.txt（推荐）：**
+**使用 requirements.txt（推荐，使用国内源）：**
 ```bash
 # 自动处理平台差异
-pip install -r requirements.txt
+pip install -r requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple/
 ```
 
 **注意：** macOS 用户不需要安装 `pywin32`，因为它是 Windows 专用的库。使用 `requirements.txt` 会自动处理平台差异。
@@ -171,8 +171,8 @@ venv\Scripts\activate
 # macOS/Linux
 source venv/bin/activate
 
-# 安装依赖
-pip install -r requirements.txt
+# 安装依赖（使用国内源）
+pip install -r requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple/
 ```
 
 ### 方法三：使用项目依赖文件
@@ -180,8 +180,8 @@ pip install -r requirements.txt
 如果您有 `pyproject.toml` 文件，可以使用以下命令：
 
 ```bash
-# 使用 pip 安装项目依赖
-pip install -e .
+# 使用 pip 安装项目依赖（使用国内源）
+pip install -e . -i https://pypi.tuna.tsinghua.edu.cn/simple/
 
 # 或使用 uv
 uv sync

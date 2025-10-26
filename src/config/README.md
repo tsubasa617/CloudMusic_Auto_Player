@@ -132,7 +132,7 @@
 如果快捷键不工作：
 
 1. 检查配置文件语法是否正确
-2. 确认依赖库已安装：`pip install pyautogui`
+2. 确认依赖库已安装：`pip install pyautogui -i https://pypi.tuna.tsinghua.edu.cn/simple/`
 3. 检查快捷键是否被其他程序占用
 4. 重启MCP服务器
 5. 查看控制台日志获取详细错误信息 

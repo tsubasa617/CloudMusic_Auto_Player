@@ -988,7 +988,7 @@ async def play_daily_recommend():
         if not SELENIUM_AVAILABLE:
             return ApiResponse(
                 success=False,
-                error="Selenium不可用，请安装selenium: pip install selenium"
+                error="Selenium不可用，请安装selenium: pip install selenium -i https://pypi.tuna.tsinghua.edu.cn/simple/"
             )
         
         # 检查配置
@@ -1092,7 +1092,7 @@ async def play_roaming():
         if not SELENIUM_AVAILABLE:
             return ApiResponse(
                 success=False,
-                error="Selenium不可用，请安装selenium: pip install selenium"
+                error="Selenium不可用，请安装selenium: pip install selenium -i https://pypi.tuna.tsinghua.edu.cn/simple/"
             )
         
         # 检查配置
@@ -1228,14 +1228,14 @@ def main():
             print("⚠️ 警告: 快捷键功能不可用")
         except UnicodeEncodeError:
             print("警告: 快捷键功能不可用")
-        print("请安装依赖: pip install pyautogui")
+        print("请安装依赖: pip install pyautogui -i https://pypi.tuna.tsinghua.edu.cn/simple/")
     
     if not SELENIUM_AVAILABLE:
         try:
             print("⚠️ 警告: Selenium不可用，每日推荐功能将无法使用")
         except UnicodeEncodeError:
             print("警告: Selenium不可用，每日推荐功能将无法使用")
-        print("请安装依赖: pip install selenium")
+        print("请安装依赖: pip install selenium -i https://pypi.tuna.tsinghua.edu.cn/simple/")
     
     print("\n🚀 启动HTTP服务器...")
     print("📖 API文档地址: http://localhost:8000/docs")

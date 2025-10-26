@@ -682,12 +682,13 @@ def get_now_playing() -> dict:
     """
     try:
         # 如果Selenium已经初始化并连接，尝试获取准确信息
-        if SELENIUM_AVAILABLE and _daily_controller and _daily_controller.driver:
+        if SELENIUM_AVAILABLE and _daily_controller and hasattr(_daily_controller, 'driver') and _daily_controller.driver:
             try:
                 # 获取当前播放的音乐信息
                 current_music = _daily_controller.get_current_music()
                 is_playing = _daily_controller.is_playing()
                 
+                # 如果有歌曲信息，返回（即使is_playing可能判断不准）
                 if current_music:
                     return {
                         "success": True,
@@ -696,6 +697,15 @@ def get_now_playing() -> dict:
                         "method": "selenium_driver",
                         "message": f"当前播放: {current_music}"
                     }
+                # 如果没有歌曲信息，也尝试返回
+                return {
+                    "success": True,
+                    "song_name": current_music,
+                    "is_playing": is_playing,
+                    "method": "selenium_driver",
+                    "note": "无法获取歌曲名称",
+                    "message": "已连接Selenium但无法获取当前歌曲信息"
+                }
             except Exception as e:
                 logger.debug(f"Selenium方式获取失败: {e}")
         

@@ -681,31 +681,21 @@ def get_now_playing() -> dict:
         dict: 当前播放的歌曲信息
     """
     try:
-        # 优先使用Selenium方式获取准确信息
-        if SELENIUM_AVAILABLE:
+        # 如果Selenium已经初始化并连接，尝试获取准确信息
+        if SELENIUM_AVAILABLE and _daily_controller and _daily_controller.driver:
             try:
-                global _daily_controller
+                # 获取当前播放的音乐信息
+                current_music = _daily_controller.get_current_music()
+                is_playing = _daily_controller.is_playing()
                 
-                # 如果控制器未初始化，尝试初始化
-                if not _daily_controller:
-                    from .controllers.daily_controller import DailyRecommendController
-                    config = load_netease_config()
-                    _daily_controller = DailyRecommendController(config)
-                
-                # 连接网易云音乐
-                if _daily_controller and _daily_controller.connect_to_netease():
-                    # 获取当前播放的音乐信息
-                    current_music = _daily_controller.get_current_music()
-                    is_playing = _daily_controller.is_playing()
-                    
-                    if current_music:
-                        return {
-                            "success": True,
-                            "song_name": current_music,
-                            "is_playing": is_playing,
-                            "method": "selenium_driver",
-                            "message": f"当前播放: {current_music}"
-                        }
+                if current_music:
+                    return {
+                        "success": True,
+                        "song_name": current_music,
+                        "is_playing": is_playing,
+                        "method": "selenium_driver",
+                        "message": f"当前播放: {current_music}"
+                    }
             except Exception as e:
                 logger.debug(f"Selenium方式获取失败: {e}")
         

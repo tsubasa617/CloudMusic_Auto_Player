@@ -44,6 +44,7 @@ python src/http_server.py
 | GET | `/` | 获取 API 基本信息 |
 | GET | `/info` | 获取控制器信息 |
 | GET | `/config` | 获取配置信息 |
+| GET | `/now-playing` | 获取当前播放的歌曲信息 |
 
 ### 应用控制
 
@@ -141,7 +142,47 @@ python src/http_server.py
 - `volume_up`: 音量加
 - `volume_down`: 音量减
 
-### 4. 搜索并播放歌曲
+### 4. 获取当前播放信息
+
+**GET** `/now-playing`
+
+获取当前正在播放的歌曲信息，支持两种方式：
+- Selenium 方式：通过浏览器自动化获取准确的歌曲信息
+- 窗口标题方式：从网易云音乐窗口标题获取信息（Windows）
+
+**响应示例（成功）：**
+```json
+{
+  "success": true,
+  "data": {
+    "song_name": "稻香 - 周杰伦",
+    "is_playing": true,
+    "method": "window_title"
+  },
+  "message": "[OK] 从窗口标题获取: 稻香 - 周杰伦"
+}
+```
+
+**响应示例（失败）：**
+```json
+{
+  "success": false,
+  "data": {
+    "song_name": null,
+    "is_playing": null,
+    "method": "none"
+  },
+  "message": "无法获取当前播放信息",
+  "error": "可能需要先启动网易云音乐并播放歌曲"
+}
+```
+
+**注意：**
+- 此接口需要网易云音乐正在运行并播放歌曲
+- Windows 系统优先使用窗口标题方式，无需额外配置
+- 如需更准确的信息，建议先启动每日推荐功能以初始化 Selenium 控制器
+
+### 5. 搜索并播放歌曲
 
 **POST** `/search-play`
 
@@ -170,7 +211,7 @@ python src/http_server.py
 }
 ```
 
-### 5. 播放歌单
+### 6. 播放歌单
 
 **POST** `/playlist-play`
 
@@ -191,7 +232,7 @@ python src/http_server.py
 - `原创榜`: 原创音乐榜
 - `私人雷达`: 私人雷达
 
-### 6. 歌单管理
+### 7. 歌单管理
 
 **POST** `/playlist-manage`
 
@@ -226,7 +267,7 @@ python src/http_server.py
 }
 ```
 
-### 7. 每日推荐
+### 8. 每日推荐
 
 **POST** `/daily-recommend`
 
@@ -234,7 +275,7 @@ python src/http_server.py
 
 **注意：** 此功能需要先配置网易云音乐路径。
 
-### 8. 私人漫游
+### 9. 私人漫游
 
 **POST** `/roaming`
 

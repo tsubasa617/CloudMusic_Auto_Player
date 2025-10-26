@@ -409,6 +409,47 @@ def _initialize_controller():
 # 创建控制器实例
 music_controller = _initialize_controller()
 
+@app.on_event("startup")
+async def startup_event():
+    """应用启动时的初始化逻辑"""
+    global _daily_controller
+    
+    try:
+        # 如果Selenium可用，尝试初始化_daily_controller
+        if SELENIUM_AVAILABLE:
+            logger.info("🔧 初始化Selenium控制器...")
+            try:
+                config = load_netease_config()
+                
+                # 检查是否配置了网易云音乐路径
+                netease_path = config.get("netease_music_path", "")
+                if netease_path and os.path.exists(netease_path):
+                    _daily_controller = DailyRecommendController(config)
+                    logger.info("✅ Selenium控制器初始化成功")
+                else:
+                    logger.info("⚠️ 网易云音乐路径未配置，跳过Selenium初始化")
+            except Exception as e:
+                logger.warning(f"⚠️ Selenium控制器初始化失败: {e}")
+                logger.info("现在playing功能将在首次调用每日推荐时初始化")
+        else:
+            logger.info("ℹ️ Selenium不可用，跳过初始化")
+    except Exception as e:
+        logger.error(f"启动事件失败: {e}")
+
+@app.on_event("shutdown")
+async def shutdown_event():
+    """应用关闭时的清理逻辑"""
+    global _daily_controller
+    
+    try:
+        if _daily_controller and _daily_controller.driver:
+            logger.info("🔧 断开Selenium连接...")
+            _daily_controller.disconnect()
+            _daily_controller = None
+            logger.info("✅ Selenium连接已断开")
+    except Exception as e:
+        logger.error(f"关闭事件失败: {e}")
+
 # Pydantic模型定义
 class LaunchRequest(BaseModel):
     minimize_window: bool = True

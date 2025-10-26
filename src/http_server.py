@@ -540,10 +540,29 @@ async def launch_netease_music(request: LaunchRequest):
                 try:
                     logger.info("🔧 网易云启动成功，尝试连接Selenium...")
                     import time
-                    time.sleep(2)  # 等待网易云完全启动
-                    if _daily_controller.connect_to_netease():
-                        logger.info("✅ Selenium已连接到网易云音乐")
-                    else:
+                    import socket
+                    
+                    # 等待网易云完全启动并检查调试端口
+                    debug_port = _daily_controller.config.get("debug_port", 9222)
+                    connected = False
+                    
+                    for i in range(5):  # 最多等待10秒
+                        time.sleep(2)
+                        # 检查调试端口是否可用
+                        try:
+                            with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+                                s.settimeout(1)
+                                if s.connect_ex(('localhost', debug_port)) == 0:
+                                    logger.info(f"调试端口可用，尝试连接...")
+                                    if _daily_controller.connect_only():
+                                        logger.info("✅ Selenium已连接到网易云音乐")
+                                        connected = True
+                                        break
+                        except:
+                            pass
+                        logger.debug(f"等待调试端口... ({i+1}/5)")
+                    
+                    if not connected:
                         logger.info("ℹ️ 暂无法连接，将在首次使用高级功能时连接")
                 except Exception as e:
                     logger.debug(f"自动连接失败: {e}")

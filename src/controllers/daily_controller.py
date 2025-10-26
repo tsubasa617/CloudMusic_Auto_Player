@@ -167,8 +167,47 @@ class DailyRecommendController:
             logger.error(f"启动网易云音乐失败: {e}")
             return False
     
+    def connect_only(self) -> bool:
+        """仅连接到已运行的网易云音乐（不启动）"""
+        try:
+            if not SELENIUM_AVAILABLE:
+                return False
+            
+            # 检查调试端口是否可用
+            debug_port = self.config.get("debug_port", 9222)
+            if not self.is_debug_port_available():
+                return False
+            
+            # 获取项目根目录
+            import os
+            project_root = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
+            
+            # 配置ChromeDriver路径
+            chromedriver_path = os.path.join(project_root, self.config.get("chromedriver_path", "src/chromedriver/win64/chromedriver.exe"))
+            
+            service = Service(executable_path=chromedriver_path)
+            
+            # 配置Chrome选项连接到现有进程
+            chrome_options = Options()
+            chrome_options.add_experimental_option("debuggerAddress", f"localhost:{debug_port}")
+            
+            # 连接到网易云音乐
+            self.driver = webdriver.Chrome(service=service, options=chrome_options)
+            
+            # 验证连接
+            logger.info(f"当前页面标题: {self.driver.title}")
+            logger.info("✅ 成功连接到网易云音乐")
+            return True
+            
+        except WebDriverException as e:
+            logger.debug(f"ChromeDriver连接失败: {e}")
+            return False
+        except Exception as e:
+            logger.debug(f"连接网易云音乐失败: {e}")
+            return False
+    
     def connect_to_netease(self) -> bool:
-        """连接到网易云音乐"""
+        """连接到网易云音乐（会启动网易云音乐）"""
         try:
             if not SELENIUM_AVAILABLE:
                 logger.error("Selenium不可用，无法使用每日推荐功能")
@@ -182,31 +221,9 @@ class DailyRecommendController:
             # 等待调试端口就绪
             time.sleep(1)
             
-            # 获取项目根目录
-            import os
-            project_root = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
+            # 使用仅连接方法
+            return self.connect_only()
             
-            # 配置ChromeDriver路径
-            chromedriver_path = os.path.join(project_root, self.config.get("chromedriver_path", "src/chromedriver/win64/chromedriver.exe"))
-            
-            service = Service(executable_path=chromedriver_path)
-            
-            # 配置Chrome选项连接到现有进程
-            chrome_options = Options()
-            debug_port = self.config.get("debug_port", 9222)
-            chrome_options.add_experimental_option("debuggerAddress", f"localhost:{debug_port}")
-            
-            # 连接到网易云音乐
-            self.driver = webdriver.Chrome(service=service, options=chrome_options)
-            
-            # 验证连接
-            logger.info(f"当前页面标题: {self.driver.title}")
-            logger.info("✅ 成功连接到网易云音乐")
-            return True
-            
-        except WebDriverException as e:
-            logger.error(f"ChromeDriver连接失败: {e}")
-            return False
         except Exception as e:
             logger.error(f"连接网易云音乐失败: {e}")
             return False

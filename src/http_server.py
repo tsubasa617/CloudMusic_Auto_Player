@@ -91,6 +91,40 @@ app = FastAPI(
     version="1.0.0"
 )
 
+# 添加IP白名单中间件
+from starlette.middleware.base import BaseHTTPMiddleware
+from starlette.requests import Request
+from starlette.responses import Response
+
+class IPWhitelistMiddleware(BaseHTTPMiddleware):
+    async def dispatch(self, request: Request, call_next):
+        # 检查环境变量中的允许IP列表
+        allowed_ips_str = os.environ.get('ALLOWED_IPS', '')
+        
+        # 如果没有设置允许的IP，或者列表为空，允许所有IP
+        if not allowed_ips_str:
+            return await call_next(request)
+        
+        # 获取客户端IP
+        client_ip = request.client.host
+        
+        # 解析允许的IP列表
+        allowed_ips = [ip.strip() for ip in allowed_ips_str.split(',')]
+        
+        # 检查IP是否在白名单中
+        if client_ip not in allowed_ips:
+            logger.warning(f"拒绝来自 {client_ip} 的访问")
+            return Response(
+                content='{"error": "Access denied: Your IP is not allowed"}',
+                status_code=403,
+                media_type="application/json"
+            )
+        
+        return await call_next(request)
+
+# 应用IP白名单中间件
+app.add_middleware(IPWhitelistMiddleware)
+
 # 添加CORS中间件
 app.add_middleware(
     CORSMiddleware,

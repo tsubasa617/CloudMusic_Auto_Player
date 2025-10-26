@@ -681,33 +681,18 @@ def get_now_playing() -> dict:
         dict: 当前播放的歌曲信息
     """
     try:
-        # 如果Selenium已经初始化并连接，尝试获取准确信息
+        # 初始化播放状态变量
+        is_playing = None
+        
+        # 如果Selenium已经初始化并连接，尝试获取播放状态
         if SELENIUM_AVAILABLE and _daily_controller and hasattr(_daily_controller, 'driver') and _daily_controller.driver:
             try:
-                # 获取当前播放的音乐信息
-                current_music = _daily_controller.get_current_music()
+                # 获取当前播放状态
                 is_playing = _daily_controller.is_playing()
-                
-                # 如果有歌曲信息，返回（即使is_playing可能判断不准）
-                if current_music:
-                    return {
-                        "success": True,
-                        "song_name": current_music,
-                        "is_playing": is_playing,
-                        "method": "selenium_driver",
-                        "message": f"当前播放: {current_music}"
-                    }
-                # 如果没有歌曲信息，也尝试返回
-                return {
-                    "success": True,
-                    "song_name": current_music,
-                    "is_playing": is_playing,
-                    "method": "selenium_driver",
-                    "note": "无法获取歌曲名称",
-                    "message": "已连接Selenium但无法获取当前歌曲信息"
-                }
+                logger.debug(f"Selenium获取播放状态: {is_playing}")
             except Exception as e:
-                logger.debug(f"Selenium方式获取失败: {e}")
+                logger.debug(f"Selenium获取播放状态失败: {e}")
+                is_playing = None
         
         # 方法2: 尝试从窗口标题获取（Windows）
         try:
@@ -738,12 +723,14 @@ def get_now_playing() -> dict:
             
             if windows:
                 title = windows[0]
+                # 如果从Selenium获取了播放状态，使用它
+                method = "combined" if is_playing is not None else "window_title"
                 return {
                     "success": True,
                     "song_name": title,
-                    "is_playing": None,  # 无法判断，需要调用者自行检查
-                    "method": "window_title",
-                    "note": "播放状态需要通过Selenium方式获取",
+                    "is_playing": is_playing,
+                    "method": method,
+                    "note": "song_name from window_title, is_playing from Selenium" if method == "combined" else "无法获取播放状态",
                     "message": f"从窗口标题获取: {title}"
                 }
         except Exception as e:

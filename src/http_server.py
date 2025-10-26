@@ -1078,17 +1078,12 @@ async def get_now_playing():
         # 初始化播放状态变量
         is_playing = None
         
-        # 如果Selenium已经初始化并连接，尝试获取播放状态
+        # 暂时跳过Selenium检查，因为is_playing的判断逻辑不准确
+        # 我们优先使用窗口标题，它更快更稳定
         if SELENIUM_AVAILABLE and _daily_controller and hasattr(_daily_controller, 'driver') and _daily_controller.driver:
-            try:
-                # 获取当前播放状态
-                is_playing = _daily_controller.is_playing()
-                # Selenium可以准确判断播放状态，但获取歌曲名不准确
-                # 所以我们会结合窗口标题来获取歌曲名
-                logger.debug(f"Selenium获取播放状态: {is_playing}")
-            except Exception as e:
-                logger.debug(f"Selenium获取播放状态失败: {e}")
-                is_playing = None
+            # Selenium已连接，但我们暂时不使用is_playing判断
+            # 因为现有的判断逻辑不够准确
+            pass
         
         # 方法2: 尝试从窗口标题获取（Windows）
         try:

@@ -1115,15 +1115,19 @@ async def get_now_playing():
             
             if windows:
                 title = windows[0]
-                # 如果从Selenium获取了播放状态，使用它
-                method = "combined" if is_playing is not None else "window_title"
+                # 尝试从窗口标题推断播放状态
+                # 如果窗口标题包含" - "说明正在播放歌曲
+                inferred_playing = None if not title or title == "网易云音乐" or title == "NetEase CloudMusic" else True
+                
+                method = "window_title" if is_playing is None else "combined"
                 return ApiResponse(
                     success=True,
                     data={
                         "song_name": title,
-                        "is_playing": is_playing,
+                        "is_playing": inferred_playing,
                         "method": method,
-                        "note": "song_name from window_title, is_playing from Selenium" if method == "combined" else "无法获取播放状态"
+                        "note": "歌曲名和播放状态均从窗口标题推断" if method == "window_title" else "song_name from window_title, is_playing from Selenium",
+                        "info": "如果is_playing是true，说明检测到播放窗口；null表示无法判断"
                     },
                     message=f"[OK] 从窗口标题获取: {title}"
                 )

@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "auto-music-player": {
+      "command": "uvx",
+      "args": [
+        "E:/MCP_Project/CloudMusic_Auto_Player/dist/cloudmusic_auto_player-1.0.0-py3-none-any.whl"
+      ],
+      "cwd": "E:/MCP_Project/CloudMusic_Auto_Player"
+    }
+  }
+}

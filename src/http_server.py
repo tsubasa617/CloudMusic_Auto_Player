@@ -425,7 +425,17 @@ async def startup_event():
                 netease_path = config.get("netease_music_path", "")
                 if netease_path and os.path.exists(netease_path):
                     _daily_controller = DailyRecommendController(config)
-                    logger.info("✅ Selenium控制器初始化成功")
+                    logger.info("✅ Selenium控制器创建成功")
+                    
+                    # 尝试连接（不强制，如果网易云没运行就跳过）
+                    try:
+                        if _daily_controller.connect_to_netease():
+                            logger.info("✅ Selenium已连接到网易云音乐")
+                        else:
+                            logger.info("ℹ️ 网易云音乐未运行，Selenium将在首次使用 daily-recommend 时连接")
+                    except Exception as e:
+                        logger.debug(f"连接网易云失败（正常）: {e}")
+                        logger.info("ℹ️ 网易云音乐未运行，将在需要时连接")
                 else:
                     logger.info("⚠️ 网易云音乐路径未配置，跳过Selenium初始化")
             except Exception as e:

@@ -682,7 +682,7 @@ def get_now_playing() -> dict:
     """
     try:
         # 如果Selenium可用，尝试从每日推荐控制器获取
-        if SELENIUM_AVAILABLE and _daily_controller.driver:
+        if SELENIUM_AVAILABLE and _daily_controller and _daily_controller.driver:
             try:
                 # 连接网易云音乐
                 if _daily_controller.connect_to_netease():

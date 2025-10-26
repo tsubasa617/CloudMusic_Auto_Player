@@ -525,6 +525,8 @@ async def root():
 @app.post("/launch", response_model=ApiResponse)
 async def launch_netease_music(request: LaunchRequest):
     """启动网易云音乐应用"""
+    global _daily_controller
+    
     try:
         # 使用orpheus://直接启动
         scheme_url = music_controller.url_schemes["open"]
@@ -533,12 +535,26 @@ async def launch_netease_music(request: LaunchRequest):
         success = music_controller.launch_by_url_scheme(scheme_url, request.minimize_window)
         
         if success:
+            # 如果Selenium可用且未连接，尝试在启动后连接
+            if SELENIUM_AVAILABLE and _daily_controller and not _daily_controller.driver:
+                try:
+                    logger.info("🔧 网易云启动成功，尝试连接Selenium...")
+                    import time
+                    time.sleep(2)  # 等待网易云完全启动
+                    if _daily_controller.connect_to_netease():
+                        logger.info("✅ Selenium已连接到网易云音乐")
+                    else:
+                        logger.info("ℹ️ 暂无法连接，将在首次使用高级功能时连接")
+                except Exception as e:
+                    logger.debug(f"自动连接失败: {e}")
+            
             return ApiResponse(
                 success=True,
                 data={
                     "scheme_url": scheme_url,
                     "minimized": request.minimize_window,
-                    "platform": get_platform()
+                    "platform": get_platform(),
+                    "selenium_connected": _daily_controller and _daily_controller.driver is not None if SELENIUM_AVAILABLE else False
                 },
                 message="[OK] 网易云音乐启动成功"
             )
